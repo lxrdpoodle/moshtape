@@ -65,6 +65,9 @@ export default function App() {
   const posterRef = useRef(null);
   const [title, setTitle] = useState("MOSHTAPE FEST");
   const [themeKey, setThemeKey] = useState("sunset");
+  const [days, setDays] = useState(1);
+  const [location, setLocation] = useState("");
+  const [startDate, setStartDate] = useState("");
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
@@ -126,7 +129,7 @@ export default function App() {
       {!token && <button onClick={login}>Log in with Spotify</button>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {token && (
+            {token && (
         <>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             <select value={range} onChange={(e) => setRange(e.target.value)}>
@@ -138,8 +141,35 @@ export default function App() {
               value={title}
               onChange={(e) => setTitle(e.target.value.toUpperCase())}
               maxLength={20}
+              placeholder="Festival name"
             />
             <button onClick={download}>Download PNG</button>
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
+            {[1, 2, 3].map((n) => (
+              <button
+                key={n}
+                onClick={() => setDays(n)}
+                style={{ fontWeight: n === days ? "bold" : "normal" }}
+              >
+                {n} day{n > 1 ? "s" : ""}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
+            <input
+              value={location}
+              onChange={(e) => setLocation(e.target.value.toUpperCase())}
+              maxLength={28}
+              placeholder="Location (e.g. BROOKLYN, NY)"
+            />
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
           </div>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
@@ -161,6 +191,9 @@ export default function App() {
                 artists={artists}
                 title={title}
                 theme={THEMES[themeKey]}
+                days={days}
+                location={location}
+                startDate={startDate}
               />
             </div>
           </div>

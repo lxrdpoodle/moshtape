@@ -65,6 +65,14 @@ export default function App() {
   const posterRef = useRef(null);
   const [title, setTitle] = useState("MOSHTAPE FEST");
   const [themeKey, setThemeKey] = useState("sunset");
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const update = () => setScale(Math.min(1, (window.innerWidth - 32) / 540));
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
 
 
@@ -112,7 +120,7 @@ export default function App() {
 
   return (
 
-    <div style={{ padding: 24, fontFamily: "sans-serif" }}>
+    <div style={{ padding: 16, fontFamily: "sans-serif" }}>
       <h1>Moshtape</h1>
 
       {!token && <button onClick={login}>Log in with Spotify</button>}
@@ -120,41 +128,41 @@ export default function App() {
 
       {token && (
         <>
-          <select value={range} onChange={(e) => setRange(e.target.value)}>
-            <option value="short_term">Last 4 weeks</option>
-            <option value="medium_term">Last 6 months</option>
-            <option value="long_term">All time</option>
-          </select>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value.toUpperCase())}
-            maxLength={20}
-            style={{ marginLeft: 8 }}
-          />
-          <button onClick={download} style={{ marginLeft: 8 }}>
-            Download PNG
-          </button>
-                    <div style={{ marginTop: 12 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            <select value={range} onChange={(e) => setRange(e.target.value)}>
+              <option value="short_term">Last 4 weeks</option>
+              <option value="medium_term">Last 6 months</option>
+              <option value="long_term">All time</option>
+            </select>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value.toUpperCase())}
+              maxLength={20}
+            />
+            <button onClick={download}>Download PNG</button>
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
             {Object.entries(THEMES).map(([key, t]) => (
               <button
                 key={key}
                 onClick={() => setThemeKey(key)}
-                style={{
-                  marginRight: 8,
-                  fontWeight: key === themeKey ? "bold" : "normal",
-                }}
+                style={{ fontWeight: key === themeKey ? "bold" : "normal" }}
               >
                 {t.label}
               </button>
             ))}
           </div>
-          <div style={{ marginTop: 16 }}>
-            <Poster
-              ref={posterRef}
-              artists={artists}
-              title={title}
-              theme={THEMES[themeKey]}
-            />
+
+          <div style={{ marginTop: 16, width: 540 * scale, height: 960 * scale }}>
+            <div style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}>
+              <Poster
+                ref={posterRef}
+                artists={artists}
+                title={title}
+                theme={THEMES[themeKey]}
+              />
+            </div>
           </div>
         </>
       )}

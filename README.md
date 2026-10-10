@@ -2,7 +2,7 @@
 
 Moshtape turns your Spotify listening into a festival lineup poster. You log in, pick a time range, decide how many days your festival runs, and download the poster. The idea comes from Receiptify, which does the same kind of thing with a receipt.
 
-Live site: [moshtape.vercel.app](moshtape.vercel.app) 
+Live site: [moshtape.vercel.app](https://moshtape.vercel.app/) 
 
 ![Example poster](screenshot.png)
 

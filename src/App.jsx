@@ -1,5 +1,5 @@
 import { toPng } from "html-to-image";
-import Poster from "./Poster";
+import Poster, { THEMES } from "./Poster";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -64,6 +64,9 @@ export default function App() {
   const ranAuth = useRef(false);
   const posterRef = useRef(null);
   const [title, setTitle] = useState("MOSHTAPE FEST");
+  const [themeKey, setThemeKey] = useState("sunset");
+
+
 
   async function download() {
     const url = await toPng(posterRef.current, { pixelRatio: 2 });
@@ -108,6 +111,7 @@ export default function App() {
   }, [token, range]);
 
   return (
+
     <div style={{ padding: 24, fontFamily: "sans-serif" }}>
       <h1>Moshtape</h1>
 
@@ -130,8 +134,27 @@ export default function App() {
           <button onClick={download} style={{ marginLeft: 8 }}>
             Download PNG
           </button>
+                    <div style={{ marginTop: 12 }}>
+            {Object.entries(THEMES).map(([key, t]) => (
+              <button
+                key={key}
+                onClick={() => setThemeKey(key)}
+                style={{
+                  marginRight: 8,
+                  fontWeight: key === themeKey ? "bold" : "normal",
+                }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
           <div style={{ marginTop: 16 }}>
-            <Poster ref={posterRef} artists={artists} title={title} />
+            <Poster
+              ref={posterRef}
+              artists={artists}
+              title={title}
+              theme={THEMES[themeKey]}
+            />
           </div>
         </>
       )}

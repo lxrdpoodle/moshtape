@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useLayoutEffect, useRef } from "react";
 
 export const THEMES = {
   sunset: {
@@ -38,6 +38,48 @@ const TIERS = [
   { from: 20, to: 32, size: 15, gap: 8 },
 ];
 
+// Poster width (540) minus padding (28 + 28), with a little breathing room
+const MAX_WIDTH = 470;
+
+// Renders one artist name on a single line, shrinking it if it's too wide
+function Name({ text, size, fontKey }) {
+  const ref = useRef(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const fitText = () => {
+      el.style.fontSize = size + "px";
+      
+      const w = el.offsetWidth;
+      if (w > MAX_WIDTH) {
+        el.style.fontSize = Math.floor((size * MAX_WIDTH) / w) + "px";
+      }
+    };
+
+    fitText();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(fitText);
+    }
+  }, [text, size, fontKey]);
+
+  return (
+    <span
+      ref={ref}
+      style={{
+        display: "inline-block",
+        whiteSpace: "nowrap",
+        wordBreak: "keep-all",
+        overflowWrap: "normal",
+      }}
+    >
+      {/* non-breaking spaces so a name can never split across lines */}
+      {text.replace(/ /g, "\u00A0")}
+    </span>
+  );
+}
+
 const Poster = forwardRef(function Poster({ artists, title, theme }, ref) {
   const names = artists.map((a) => a.name.toUpperCase());
 
@@ -72,13 +114,18 @@ const Poster = forwardRef(function Poster({ artists, title, theme }, ref) {
             <div
               key={i}
               style={{
-                fontSize: tier.size,
-                lineHeight: 1.15,
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                columnGap: tier.size * 0.5,
+                rowGap: 2,
                 marginBottom: tier.gap + 8,
-                wordBreak: "break-word",
+                lineHeight: 1.15,
               }}
             >
-              {row.join("  •  ")}
+              {row.map((name, j) => (
+                <Name key={j} text={name} size={tier.size} fontKey={theme.font} />
+              ))}
             </div>
           );
         })}

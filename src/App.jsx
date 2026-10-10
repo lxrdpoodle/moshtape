@@ -4,7 +4,7 @@ import Poster, { THEMES } from "./Poster";
 import { useEffect, useRef, useState } from "react";
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-const REDIRECT_URI = "http://127.0.0.1:5173/callback";
+const REDIRECT_URI = `${window.location.origin}/callback`;
 const SCOPE = "user-top-read";
 
 function randomString(length) {
